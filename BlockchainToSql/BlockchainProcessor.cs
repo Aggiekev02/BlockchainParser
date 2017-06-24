@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Temosoft.Bitcoin.Blockchain;
+//using Temosoft.Bitcoin.Blockchain;
 
 namespace BlockchainToSql
 {

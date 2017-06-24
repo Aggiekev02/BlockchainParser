@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.IO.MemoryMappedFiles;
+//using System.IO.MemoryMappedFiles;
 using System.Linq;
 
 namespace Temosoft.Bitcoin.Blockchain
@@ -9,7 +9,7 @@ namespace Temosoft.Bitcoin.Blockchain
     {
         public void Parse(string[] filesPath)
         {
-#if true
+#if false
             var streams = filesPath
                 .Select(filePath => MemoryMappedFile.CreateFromFile(filePath, FileMode.Open, Path.GetFileName(filePath), 0, MemoryMappedFileAccess.Read))
                 .Select(mmf => mmf.CreateViewStream(0, 0, MemoryMappedFileAccess.Read))

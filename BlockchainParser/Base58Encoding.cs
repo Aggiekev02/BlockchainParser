@@ -98,7 +98,7 @@ namespace Temosoft.Bitcoin.Blockchain
 
         private static byte[] GetCheckSum(byte[] data)
         {
-            SHA256 sha256 = new SHA256Managed();
+            SHA256 sha256 = new System.Security.Cryptography.Algorithms.SHA256.Create();
             byte[] hash1 = sha256.ComputeHash(data);
             byte[] hash2 = sha256.ComputeHash(hash1);
 
