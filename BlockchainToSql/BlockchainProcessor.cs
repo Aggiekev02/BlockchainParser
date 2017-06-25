@@ -1,84 +1,81 @@
 using System;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-//using Temosoft.Bitcoin.Blockchain;
+using BlockchainToSql.Models;
+using Temosoft.Bitcoin.Blockchain;
 
 namespace BlockchainToSql
 {
-    //internal class BlockchainProcessor : BlockchainParser
-    //{
-    //    private static DateTime First1970 = new DateTime(1970, 1, 1);
-    //    private readonly List<blocks> _blocks = new List<blocks>();
-    //    private long _records;
+    internal class BlockchainProcessor : BlockchainParser
+    {
+        private long _records;
 
-    //    private DateTime _begin = DateTime.UtcNow;
+        protected override void ProcessBlock(Block block)
+        {
+            var dbOptions = new DbContextOptionsBuilder<BlockchainContext>();
+            dbOptions.UseSqlServer(@"Server=(local)\sql2016;Database=blockchain;Trusted_Connection=True;");
 
-    //    protected override void ProcessBlock(Block block)
-    //    {
-    //        if(_blocks.Count == 10)
-    //        {
-    //            using(var dbContext = new blockchainEntities() )
-    //            {
-    //                dbContext.Configuration.AutoDetectChangesEnabled = false;
-    //                dbContext.Configuration.ValidateOnSaveEnabled = false;
-                    
-    //                foreach (var b in _blocks)
-    //                {
-    //                    dbContext.blocks.Add(b);
-    //                }
+            using (var context = new BlockchainContext(dbOptions.Options))
+            {
+                var blockEntity = new Blocks
+                {
+                    Length = (int)block.HeaderLength,
+                    LockTime = block.LockTime,
+                    MerkleRoot = block.MerkleRoot,
+                    Nonce = block.Nonce,
+                    PreviousBlockHash = block.PreviousBlockHash,
+                    TargetDifficulty = block.Difficulty,
+                    TimeStamp = block.TimeStamp
+                };
+                _records++;
 
-    //                var d = DateTime.UtcNow;
-    //                dbContext.SaveChanges();
-    //                Console.Write("{0,8:F0} milliseconds  ->", (DateTime.UtcNow - d).TotalMilliseconds );
+                context.Blocks.Add(blockEntity);
+                context.SaveChanges();
 
-    //                _blocks.Clear();
-    //                var segs = (DateTime.UtcNow - _begin).TotalSeconds;
-    //                Console.WriteLine("{0,6} records -> 10 blocks in {1,6:F3} segs = {2,8:F4} seg/records", _records, segs, segs / _records);
-    //                _records = 0;
-    //                _begin = DateTime.UtcNow;
-    //            }
-    //        }
-    //        else
-    //        {
-    //            var blockEntity = new blocks {
-    //                Length = (int) block.HeaderLength,
-    //                LockTime = block.LockTime,
-    //                MerkleRoot = block.MerkleRoot,
-    //                Nonce = block.Nonce,
-    //                PreviousBlockHash = block.PreviousBlockHash,
-    //                //TargetDifficulty = block.TimeStamp,
-    //                TimeStamp = block.TimeStamp
-    //            };
-    //            _records++;
+                //foreach (var transaction in block.Transactions)
+                //{
+                //    var transactionEntity = new Transactions
+                //    {
+                //        Version = transaction.VersionNumber,
+                //        BlockID = blockEntity.ID
+                //    };
+                //    _records++;
+                //    context.Transactions.Add(transactionEntity);
+                //    context.SaveChanges();
 
-    //            foreach (var transaction in block.Transactions)
-    //            {
-    //                var transactionEntity = new Transactions();
-    //                transactionEntity.Version = transaction.VersionNumber;
-    //                _records++;
+                //    foreach (var input in transaction.Inputs)
+                //    {
+                //        if (input == null)
+                //            continue;
 
-    //                foreach (var input in transaction.Inputs)
-    //                {
-    //                    transactionEntity.Inputs.Add(new Inputs {
-    //                        Script = input.Script,
-    //                        SequenceNumber = input.SequenceNumber,
-    //                        TransactionHash = input.TransactionHash,
-    //                        TransactionIndex = input.TransactionIndex
-    //                    });
-    //                    _records++;
-    //                }
+                //        context.Inputs.Add(new Inputs
+                //        {
+                //            Script = input.Script,
+                //            SequenceNumber = input.SequenceNumber,
+                //            TransactionHash = input.TransactionHash,
+                //            TransactionIndex = input.TransactionIndex,
+                //            TransactionID = transactionEntity.ID
+                //        });
+                //        _records++;
+                //    }
 
-    //                foreach (var output in transaction.Outputs)
-    //                {
-    //                    transactionEntity.Outputs.Add(new Outputs {
-    //                        Script = output.Script,
-    //                        Value = (long) output.Value
-    //                    });
-    //                    _records++;
-    //                }
-    //                blockEntity.Transactions.Add(transactionEntity);
-    //            }
-    //            _blocks.Add(blockEntity);
-    //        }
-    //    }
-    //}
+                //    foreach (var output in transaction.Outputs)
+                //    {
+                //        if (output == null)
+                //            continue;
+
+                //        context.Outputs.Add(new Outputs
+                //        {
+                //            Script = output.Script,
+                //            Value = (long)output.Value,
+                //            TransactionID = transactionEntity.ID
+                //        });
+                //        _records++;
+                //    }
+
+                //    context.SaveChanges();
+                //}
+            }
+        }
+    }
 }

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Temosoft.Bitcoin.Blockchain
 {
     public class Transaction
