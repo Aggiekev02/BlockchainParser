@@ -105,7 +105,7 @@ namespace Temosoft.Bitcoin.Blockchain
             _transactionCount = r.ReadVarInt();
         }
 
-        public long Difficulty
+        public double Difficulty
         {
             get { return CalculateDifficulty(); }
         }
@@ -138,14 +138,23 @@ namespace Temosoft.Bitcoin.Blockchain
             _reader = new Lazy<BinaryReader>(() => new BinaryReader(stream));
         }
 
-        private long CalculateDifficulty()
+        private double CalculateDifficulty()
         {
-            //is 0x1b0404cb, the hexadecimal target is
-            //0x0404cb * 2**(8*(0x1b - 3)) = 0x00000000000404CB000000000000000000000000000000000000000000000000
-            uint p = Bits & 0x00FFFFFF;
-            uint e = (Bits & 0xFF000000) >> 24;
-            var dif = p*Math.Pow(2, (8*(e - 3)));
-            return (long)dif;
+            return CalculateDifficulty(Bits);
+        }
+
+        //static double max_body = fast_log(0x00ffff), scaland = fast_log(256);
+        private static readonly double max_body = Math.Log(0x00ffff);
+        private static readonly double scaland = Math.Log(256);
+
+        private static double CalculateDifficulty(uint bits)
+        {
+            //return exp(max_body - fast_log(bits & 0x00ffffff) + scaland * (0x1d - ((bits & 0xff000000) >> 24)));
+            var part1 = Math.Log(bits & 0x00ffffff);
+            var part2 = 0x1d - ((bits & 0xff000000) >> 24);
+            var exp = Math.Exp(max_body - part1 + scaland * part2);
+
+            return exp;
         }
     }
 }

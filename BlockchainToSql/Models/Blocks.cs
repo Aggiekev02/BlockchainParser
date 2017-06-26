@@ -16,7 +16,7 @@ namespace BlockchainToSql.Models
 
         public byte[] PreviousBlockHash { get; set; }
 
-        public long TargetDifficulty { get; set; }
+        public double TargetDifficulty { get; set; }
 
         public DateTime TimeStamp { get; set; }
 

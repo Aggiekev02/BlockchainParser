@@ -1,5 +1,13 @@
 USE [blockchain]
 GO
+
+drop table dbo.Inputs
+drop table dbo.Outputs
+drop table dbo.Transactions
+drop table dbo.Blocks
+
+GO
+
 /****** Object:  Table [dbo].[Blocks]    Script Date: 6/24/2017 9:51:32 PM ******/
 SET ANSI_NULLS ON
 GO
@@ -11,7 +19,7 @@ CREATE TABLE [dbo].[Blocks](
 	[LockTime] [bigint] NOT NULL,
 	[Nonce] [bigint] NOT NULL,
 	[PreviousBlockHash] [binary](32) NOT NULL,
-	[TargetDifficulty] [bigint] NOT NULL,
+	[TargetDifficulty] [float] NOT NULL,
 	[TimeStamp] [datetime] NOT NULL,
 	[MerkleRoot] [binary](32) NOT NULL,
  CONSTRAINT [PK_blocks] PRIMARY KEY CLUSTERED 
