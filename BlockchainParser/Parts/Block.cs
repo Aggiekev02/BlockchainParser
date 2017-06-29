@@ -121,14 +121,63 @@ namespace Temosoft.Bitcoin.Blockchain
                     t.VersionNumber = r.ReadUInt32();
 
                     var inputCount = r.ReadVarInt();
-                    t.Inputs = new Input[inputCount];
+                    if (inputCount == 0)
+                        t.Inputs = null;
+                    else
+                        t.Inputs = ParseInputs(inputCount, r);
 
                     var outputCount = r.ReadVarInt();
-                    t.Outputs = new Output[outputCount];
+                    if (outputCount == 0)
+                        t.Outputs = null;
+                    else
+                        t.Outputs = ParseOutputs(outputCount, r);
 
                     yield return t;
                 }
             }
+        }
+
+        private static Input[] ParseInputs(long inputCount, BinaryReader r)
+        {
+            var inputs = new List<Input>((int)inputCount);
+
+            for (var i = 0; i < inputCount; i++)
+            {
+                var input = new Input
+                {
+                    TransactionHash = r.ReadBytes(32),
+                    TransactionIndex = r.ReadUInt32()
+                };
+
+                var scriptLength = r.ReadVarInt();
+                input.Script = r.ReadBytes((int)scriptLength);
+
+                input.SequenceNumber = r.ReadUInt32();
+
+                inputs.Add(input);
+            }
+
+            return inputs.ToArray();
+        }
+
+        private static Output[] ParseOutputs(long outputCount, BinaryReader r)
+        {
+            var outputs = new List<Output>((int)outputCount);
+
+            for (var i = 0; i < outputCount; i++)
+            {
+                var output = new Output();
+
+                output.Value = r.ReadUInt64();
+
+                var length = r.ReadVarInt();
+
+                output.Script = r.ReadBytes((int)length);
+
+                outputs.Add(output);
+            }
+
+            return outputs.ToArray();
         }
 
         public Block(Stream stream)

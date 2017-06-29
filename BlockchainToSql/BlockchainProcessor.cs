@@ -32,49 +32,51 @@ namespace BlockchainToSql
                 context.Blocks.Add(blockEntity);
                 context.SaveChanges();
 
-                //foreach (var transaction in block.Transactions)
-                //{
-                //    var transactionEntity = new Transactions
-                //    {
-                //        Version = transaction.VersionNumber,
-                //        BlockID = blockEntity.ID
-                //    };
-                //    _records++;
-                //    context.Transactions.Add(transactionEntity);
-                //    context.SaveChanges();
+                foreach (var transaction in block.Transactions)
+                {
+                    var transactionEntity = new Transactions
+                    {
+                        Version = transaction.VersionNumber,
+                        BlockID = blockEntity.ID
+                    };
+                    _records++;
+                    context.Transactions.Add(transactionEntity);
+                    context.SaveChanges();
 
-                //    foreach (var input in transaction.Inputs)
-                //    {
-                //        if (input == null)
-                //            continue;
+                    if (transaction.Inputs != null)
+                        foreach (var input in transaction.Inputs)
+                        {
+                            if (input == null)
+                                continue;
 
-                //        context.Inputs.Add(new Inputs
-                //        {
-                //            Script = input.Script,
-                //            SequenceNumber = input.SequenceNumber,
-                //            TransactionHash = input.TransactionHash,
-                //            TransactionIndex = input.TransactionIndex,
-                //            TransactionID = transactionEntity.ID
-                //        });
-                //        _records++;
-                //    }
+                            context.Inputs.Add(new Inputs
+                            {
+                                Script = input.Script,
+                                SequenceNumber = input.SequenceNumber,
+                                TransactionHash = input.TransactionHash,
+                                TransactionIndex = input.TransactionIndex,
+                                TransactionID = transactionEntity.ID
+                            });
+                            _records++;
+                        }
 
-                //    foreach (var output in transaction.Outputs)
-                //    {
-                //        if (output == null)
-                //            continue;
+                    if (transaction.Outputs != null)
+                        foreach (var output in transaction.Outputs)
+                        {
+                            if (output == null)
+                                continue;
 
-                //        context.Outputs.Add(new Outputs
-                //        {
-                //            Script = output.Script,
-                //            Value = (long)output.Value,
-                //            TransactionID = transactionEntity.ID
-                //        });
-                //        _records++;
-                //    }
+                            context.Outputs.Add(new Outputs
+                            {
+                                Script = output.Script,
+                                Value = (long)output.Value,
+                                TransactionID = transactionEntity.ID
+                            });
+                            _records++;
+                        }
 
-                //    context.SaveChanges();
-                //}
+                    context.SaveChanges();
+                }
             }
         }
     }
