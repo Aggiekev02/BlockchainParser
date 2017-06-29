@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -24,7 +25,11 @@ namespace Temosoft.Bitcoin.Blockchain
 
         public static byte[] ReadHashAsByteArray(this BinaryReader reader)
         {
-            return reader.ReadBytes(32);
+            var bytes = new List<byte>(reader.ReadBytes(32));
+
+            bytes.Reverse();
+
+            return bytes.ToArray();
         }
     }
 

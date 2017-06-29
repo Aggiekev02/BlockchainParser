@@ -118,7 +118,7 @@ namespace Temosoft.Bitcoin.Blockchain
                 for (var ti = 0; ti < _transactionCount; ti++)
                 {
                     var t = new Transaction();
-                    t.VersionNumber = r.ReadUInt32();
+                    t.VersionNumber = r.ReadInt32();
 
                     var inputCount = r.ReadVarInt();
                     if (inputCount == 0)
@@ -131,6 +131,8 @@ namespace Temosoft.Bitcoin.Blockchain
                         t.Outputs = null;
                     else
                         t.Outputs = ParseOutputs(outputCount, r);
+
+                    t.LockTime = r.ReadUInt32();
 
                     yield return t;
                 }

@@ -2,8 +2,9 @@ namespace Temosoft.Bitcoin.Blockchain
 {
     public class Transaction
     {
-        public uint VersionNumber;
+        public int VersionNumber;
         public Input[] Inputs;
         public Output[] Outputs;
+        public uint LockTime;
     }
 }
