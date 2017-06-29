@@ -21,7 +21,7 @@ namespace Temosoft.Bitcoin.Blockchain
         private long _size;
         private uint _nonce;
         private uint _bits;
-        private long _transactionCount;
+        private ulong _transactionCount;
 
         public uint VersionNumber
         {
@@ -102,7 +102,7 @@ namespace Temosoft.Bitcoin.Blockchain
             _timeStamp = _epochBaseDate.AddSeconds(r.ReadUInt32());
             _bits = r.ReadUInt32();
             _nonce = r.ReadUInt32();
-            _transactionCount = r.ReadVarInt();
+            _transactionCount = r.ReadCompactSize();
         }
 
         public double Difficulty
@@ -115,18 +115,18 @@ namespace Temosoft.Bitcoin.Blockchain
             get
             {
                 var r = _reader.Value;
-                for (var ti = 0; ti < _transactionCount; ti++)
+                for (ulong ti = 0; ti < _transactionCount; ti++)
                 {
                     var t = new Transaction();
                     t.VersionNumber = r.ReadInt32();
 
-                    var inputCount = r.ReadVarInt();
+                    var inputCount = r.ReadCompactSize();
                     if (inputCount == 0)
                         t.Inputs = null;
                     else
                         t.Inputs = ParseInputs(inputCount, r);
 
-                    var outputCount = r.ReadVarInt();
+                    var outputCount = r.ReadCompactSize();
                     if (outputCount == 0)
                         t.Outputs = null;
                     else
@@ -139,19 +139,20 @@ namespace Temosoft.Bitcoin.Blockchain
             }
         }
 
-        private static Input[] ParseInputs(long inputCount, BinaryReader r)
+        private static Input[] ParseInputs(ulong inputCount, BinaryReader r)
         {
             var inputs = new List<Input>((int)inputCount);
 
-            for (var i = 0; i < inputCount; i++)
+            for (ulong i = 0; i < inputCount; i++)
             {
                 var input = new Input
                 {
-                    TransactionHash = r.ReadBytes(32),
+                    TransactionHash = r.ReadHashAsByteArray(),
                     TransactionIndex = r.ReadUInt32()
                 };
 
-                var scriptLength = r.ReadVarInt();
+                var scriptLength = r.ReadCompactSize();
+
                 input.Script = r.ReadBytes((int)scriptLength);
 
                 input.SequenceNumber = r.ReadUInt32();
@@ -162,17 +163,17 @@ namespace Temosoft.Bitcoin.Blockchain
             return inputs.ToArray();
         }
 
-        private static Output[] ParseOutputs(long outputCount, BinaryReader r)
+        private static Output[] ParseOutputs(ulong outputCount, BinaryReader r)
         {
             var outputs = new List<Output>((int)outputCount);
 
-            for (var i = 0; i < outputCount; i++)
+            for (ulong i = 0; i < outputCount; i++)
             {
                 var output = new Output();
 
                 output.Value = r.ReadUInt64();
 
-                var length = r.ReadVarInt();
+                var length = r.ReadCompactSize();
 
                 output.Script = r.ReadBytes((int)length);
 

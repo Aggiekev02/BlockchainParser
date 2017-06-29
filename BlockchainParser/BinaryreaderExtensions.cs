@@ -6,21 +6,15 @@ namespace Temosoft.Bitcoin.Blockchain
 {
     public static class BinaryReaderExtensions
     {
-        public static long ReadVarInt(this BinaryReader reader)
+        public static ulong ReadCompactSize(this BinaryReader reader)
         {
             var t = reader.ReadByte();
             if (t < 0xfd) return t;
-            if (t == 0xfd)return reader.ReadInt16();
-            if (t == 0xfe)return reader.ReadInt32();
-            if (t == 0xff)return reader.ReadInt64();
-            
-            throw new InvalidDataException("Reading Var Int");
-        }
+            if (t == 0xfd) return reader.ReadUInt16();
+            if (t == 0xfe) return reader.ReadUInt32();
+            if (t == 0xff) return reader.ReadUInt64();
 
-        public static byte[] ReadStringAsByteArray(this BinaryReader reader)
-        {
-            var scriptLength = reader.ReadVarInt();
-            return reader.ReadBytes((int)scriptLength);
+            throw new InvalidDataException("Reading Var Int");
         }
 
         public static byte[] ReadHashAsByteArray(this BinaryReader reader)
