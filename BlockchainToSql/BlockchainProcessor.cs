@@ -1,6 +1,4 @@
-using System;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using BlockchainToSql.Models;
 using Temosoft.Bitcoin.Blockchain;
 
@@ -20,7 +18,6 @@ namespace BlockchainToSql
                 var blockEntity = new Blocks
                 {
                     Length = (int)block.HeaderLength,
-                    LockTime = block.LockTime,
                     MerkleRoot = block.MerkleRoot,
                     Nonce = block.Nonce,
                     PreviousBlockHash = block.PreviousBlockHash,

@@ -13,17 +13,15 @@ namespace Temosoft.Bitcoin.Blockchain
 
         public uint HeaderLength;
 
-        private uint _versionNumber;
+        private int _versionNumber;
         private byte[] _previousBlockHash;
         private byte[] _merkleRoot;
         private DateTime _timeStamp;
-        private uint _lockTime;
-        private long _size;
         private uint _nonce;
         private uint _bits;
         private ulong _transactionCount;
 
-        public uint VersionNumber
+        public int VersionNumber
         {
             get
             {
@@ -74,29 +72,13 @@ namespace Temosoft.Bitcoin.Blockchain
                 return _nonce;
             }
         }
-        public uint LockTime
-        {
-            get
-            {
-                ReadHeader();
-                return _lockTime;
-            }
-        }
-        public long Size
-        {
-            get
-            {
-                ReadHeader();
-                return _size;
-            }
-        }
 
         private void ReadHeader()
         {
             if(_versionNumber > 0) return;
             var r = _reader.Value;
             r.BaseStream.Position = _position + 4;
-            _versionNumber = r.ReadUInt32();
+            _versionNumber = r.ReadInt32();
             _previousBlockHash = r.ReadHashAsByteArray();
             _merkleRoot = r.ReadHashAsByteArray();
             _timeStamp = _epochBaseDate.AddSeconds(r.ReadUInt32());
