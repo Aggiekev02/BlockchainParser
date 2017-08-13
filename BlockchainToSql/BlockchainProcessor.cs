@@ -14,65 +14,75 @@ namespace BlockchainToSql
             dbOptions.UseSqlServer(@"Server=(local)\sql2016;Database=blockchain;Trusted_Connection=True;");
 
             using (var context = new BlockchainContext(dbOptions.Options))
+            using(var transaction = context.Database.BeginTransaction())
             {
-                var blockEntity = new Blocks
+                try
                 {
-                    Length = (int)block.HeaderLength,
-                    MerkleRoot = block.MerkleRoot,
-                    Nonce = block.Nonce,
-                    PreviousBlockHash = block.PreviousBlockHash,
-                    TargetDifficulty = block.Difficulty,
-                    TimeStamp = block.TimeStamp
-                };
-                _records++;
-
-                context.Blocks.Add(blockEntity);
-                context.SaveChanges();
-
-                foreach (var transaction in block.Transactions)
-                {
-                    var transactionEntity = new Transactions
+                    var blockEntity = new Blocks
                     {
-                        Version = transaction.VersionNumber,
-                        BlockID = blockEntity.ID
+                        Length = (int)block.HeaderLength,
+                        MerkleRoot = block.MerkleRoot,
+                        Nonce = block.Nonce,
+                        PreviousBlockHash = block.PreviousBlockHash,
+                        TargetDifficulty = block.Difficulty,
+                        TimeStamp = block.TimeStamp
                     };
                     _records++;
-                    context.Transactions.Add(transactionEntity);
+
+                    context.Blocks.Add(blockEntity);
                     context.SaveChanges();
 
-                    if (transaction.Inputs != null)
-                        foreach (var input in transaction.Inputs)
+                    foreach (var trans in block.Transactions)
+                    {
+                        var transactionEntity = new Transactions
                         {
-                            if (input == null)
-                                continue;
+                            Version = trans.VersionNumber,
+                            BlockID = blockEntity.ID
+                        };
+                        _records++;
+                        context.Transactions.Add(transactionEntity);
+                        context.SaveChanges();
 
-                            context.Inputs.Add(new Inputs
+                        if (trans.Inputs != null)
+                            foreach (var input in trans.Inputs)
                             {
-                                Script = input.Script,
-                                SequenceNumber = input.SequenceNumber,
-                                TransactionHash = input.TransactionHash,
-                                TransactionIndex = input.TransactionIndex,
-                                TransactionID = transactionEntity.ID
-                            });
-                            _records++;
-                        }
+                                if (input == null)
+                                    continue;
 
-                    if (transaction.Outputs != null)
-                        foreach (var output in transaction.Outputs)
-                        {
-                            if (output == null)
-                                continue;
+                                context.Inputs.Add(new Inputs
+                                {
+                                    Script = input.Script,
+                                    SequenceNumber = input.SequenceNumber,
+                                    TransactionHash = input.TransactionHash,
+                                    TransactionIndex = input.TransactionIndex,
+                                    TransactionID = transactionEntity.ID
+                                });
+                                _records++;
+                            }
 
-                            context.Outputs.Add(new Outputs
+                        if (trans.Outputs != null)
+                            foreach (var output in trans.Outputs)
                             {
-                                Script = output.Script,
-                                Value = (long)output.Value,
-                                TransactionID = transactionEntity.ID
-                            });
-                            _records++;
-                        }
+                                if (output == null)
+                                    continue;
 
-                    context.SaveChanges();
+                                context.Outputs.Add(new Outputs
+                                {
+                                    Script = output.Script,
+                                    Value = (long)output.Value,
+                                    TransactionID = transactionEntity.ID
+                                });
+                                _records++;
+                            }
+
+                        context.SaveChanges();
+                    }
+
+                    transaction.Commit();
+                }
+                catch
+                {
+                    transaction.Rollback();
                 }
             }
         }
