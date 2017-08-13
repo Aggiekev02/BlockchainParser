@@ -1,9 +1,10 @@
-using Microsoft.EntityFrameworkCore;
-using BlockchainToSql.Models;
-using Temosoft.Bitcoin.Blockchain;
-
 namespace BlockchainToSql
 {
+    using System;
+    using Microsoft.EntityFrameworkCore;
+    using BlockchainToSql.Models;
+    using Temosoft.Bitcoin.Blockchain;
+
     internal class BlockchainProcessor : BlockchainParser
     {
         private long _records;
@@ -80,7 +81,7 @@ namespace BlockchainToSql
 
                     transaction.Commit();
                 }
-                catch
+                catch(Exception ex)
                 {
                     transaction.Rollback();
                 }

@@ -63,13 +63,10 @@ namespace Temosoft.Bitcoin.Blockchain
 
         private static Block ReadBlock(BinaryReader reader)
         {
-            //var magic = reader.ReadUInt32();
-            //if(magic != 3652501241) throw new Exception("el numero magico no coincide");
+            var block = Block.Parse(reader.BaseStream);
 
-            var block = new Block(reader.BaseStream);
-            //block.MagicId = magic;
-            block.HeaderLength = reader.ReadUInt32();
             reader.BaseStream.Seek(block.HeaderLength, SeekOrigin.Current);
+
             return block;
 #if false
             block.VersionNumber = reader.ReadUInt32();

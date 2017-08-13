@@ -7,174 +7,58 @@ namespace Temosoft.Bitcoin.Blockchain
     public class Block
     {
         private static DateTime _epochBaseDate = new DateTime(1970,1,1);
-        private readonly long _position;
-        private Stream _stream;
-        private readonly Lazy<BinaryReader> _reader;
 
-        public uint HeaderLength;
+        private long Position { get; set; }
 
-        private int _versionNumber;
-        private byte[] _previousBlockHash;
-        private byte[] _merkleRoot;
-        private DateTime _timeStamp;
-        private uint _nonce;
-        private uint _bits;
-        private ulong _transactionCount;
+        private Stream Stream { get; set; }
 
-        public int VersionNumber
+        private BinaryReader Reader { get; set; }
+
+        public uint HeaderLength { get; private set; }
+
+        public int VersionNumber { get; private set; }
+
+        public byte[] PreviousBlockHash { get; private set; }
+
+        public byte[] MerkleRoot { get; private set; }
+
+        public DateTime TimeStamp { get; private set; }
+
+        public uint Bits { get; private set; }
+
+        public uint Nonce { get; private set; }
+
+        public double Difficulty { get; private set; }
+
+        public IEnumerable<Transaction> Transactions { get; private set; }
+
+        public Block()
         {
-            get
-            {
-                ReadHeader();
-                return _versionNumber;
-            }
+
         }
 
-        public byte[] PreviousBlockHash
+        public static Block Parse(Stream stream)
         {
-            get
-            {
-                ReadHeader();
-                return _previousBlockHash;
-            }
-        }
+            var block = new Block();
 
-        public byte[] MerkleRoot
-        {
-            get
-            {
-                ReadHeader();
-                return _merkleRoot;
-            }
-        }
+            block.Position = stream.Position;
+            block.Stream = stream;
+            block.Reader = new BinaryReader(stream);
 
-        public DateTime TimeStamp
-        {
-            get
-            {
-                ReadHeader();
-                return _timeStamp;
-            }
-        }
-        public uint Bits
-        {
-            get
-            {
-                ReadHeader();
-                return _bits;
-            }
-        }
-        public uint Nonce
-        {
-            get
-            {
-                ReadHeader();
-                return _nonce;
-            }
-        }
+            block.HeaderLength = block.Reader.ReadUInt32();
+            block.VersionNumber = block.Reader.ReadInt32();
+            block.PreviousBlockHash = block.Reader.ReadHashAsByteArray();
+            block.MerkleRoot = block.Reader.ReadHashAsByteArray();
+            block.TimeStamp = _epochBaseDate.AddSeconds(block.Reader.ReadUInt32());
+            block.Bits = block.Reader.ReadUInt32();
+            block.Nonce = block.Reader.ReadUInt32();
+            var transactionCount = block.Reader.ReadCompactSize();
 
-        private void ReadHeader()
-        {
-            if(_versionNumber > 0) return;
-            var r = _reader.Value;
-            r.BaseStream.Position = _position + 4;
-            _versionNumber = r.ReadInt32();
-            _previousBlockHash = r.ReadHashAsByteArray();
-            _merkleRoot = r.ReadHashAsByteArray();
-            _timeStamp = _epochBaseDate.AddSeconds(r.ReadUInt32());
-            _bits = r.ReadUInt32();
-            _nonce = r.ReadUInt32();
-            _transactionCount = r.ReadCompactSize();
-        }
+            block.Transactions = Transaction.ParseMultiple(block.Reader, transactionCount);
 
-        public double Difficulty
-        {
-            get { return CalculateDifficulty(); }
-        }
+            block.Difficulty = CalculateDifficulty(block.Bits);
 
-        public IEnumerable<Transaction> Transactions
-        {
-            get
-            {
-                var r = _reader.Value;
-                for (ulong ti = 0; ti < _transactionCount; ti++)
-                {
-                    var t = new Transaction();
-                    t.VersionNumber = r.ReadInt32();
-
-                    var inputCount = r.ReadCompactSize();
-                    if (inputCount == 0)
-                        t.Inputs = null;
-                    else
-                        t.Inputs = ParseInputs(inputCount, r);
-
-                    var outputCount = r.ReadCompactSize();
-                    if (outputCount == 0)
-                        t.Outputs = null;
-                    else
-                        t.Outputs = ParseOutputs(outputCount, r);
-
-                    t.LockTime = r.ReadUInt32();
-
-                    yield return t;
-                }
-            }
-        }
-
-        private static Input[] ParseInputs(ulong inputCount, BinaryReader r)
-        {
-            var inputs = new List<Input>((int)inputCount);
-
-            for (ulong i = 0; i < inputCount; i++)
-            {
-                var input = new Input
-                {
-                    TransactionHash = r.ReadHashAsByteArray(),
-                    TransactionIndex = r.ReadUInt32()
-                };
-
-                var scriptLength = r.ReadCompactSize();
-
-                input.Script = r.ReadBytes((int)scriptLength);
-
-                input.SequenceNumber = r.ReadUInt32();
-
-                inputs.Add(input);
-            }
-
-            return inputs.ToArray();
-        }
-
-        private static Output[] ParseOutputs(ulong outputCount, BinaryReader r)
-        {
-            var outputs = new List<Output>((int)outputCount);
-
-            for (ulong i = 0; i < outputCount; i++)
-            {
-                var output = new Output();
-
-                output.Value = r.ReadUInt64();
-
-                var length = r.ReadCompactSize();
-
-                output.Script = r.ReadBytes((int)length);
-
-                outputs.Add(output);
-            }
-
-            return outputs.ToArray();
-        }
-
-        public Block(Stream stream)
-        {
-            _position = stream.Position;
-            _stream = stream;
-            _reader = new Lazy<BinaryReader>(() => new BinaryReader(stream));
-        }
-
-        private double CalculateDifficulty()
-        {
-            return CalculateDifficulty(Bits);
+            return block;
         }
 
         //static double max_body = fast_log(0x00ffff), scaland = fast_log(256);
