@@ -1,24 +1,28 @@
-namespace Temosoft.Bitcoin.Blockchain
+namespace BlockchainParser.Parts
 {
     using System.Collections.Generic;
     using System.IO;
 
     public class Output
     {
-        public ulong Value;
-        public byte[] Script;
+        public ulong Value { get; private set; }
+        public byte[] Script { get; private set; }
 
         public static IEnumerable<Output> ParseMultiple(BinaryReader r, ulong count)
         {
             if (count == 0)
                 return null;
 
+            var list = new List<Output>((int)count);
+
             for (ulong i = 0; i < count; i++)
             {
                 var output = Parse(r);
 
-                yield return output;
+                list.Add(output);
             }
+
+            return list;
         }
 
         public static Output Parse(BinaryReader r)

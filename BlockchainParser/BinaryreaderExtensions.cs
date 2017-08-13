@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Temosoft.Bitcoin.Blockchain
+namespace BlockchainParser
 {
     public static class BinaryReaderExtensions
     {

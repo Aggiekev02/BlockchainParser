@@ -1,23 +1,27 @@
-namespace Temosoft.Bitcoin.Blockchain
+namespace BlockchainParser.Parts
 {
     using System.Collections.Generic;
     using System.IO;
 
     public class Transaction
     {
-        public int VersionNumber;
-        public IEnumerable<Input> Inputs;
-        public IEnumerable<Output> Outputs;
-        public uint LockTime;
+        public int VersionNumber { get; private set; }
+        public IEnumerable<Input> Inputs { get; private set; }
+        public IEnumerable<Output> Outputs { get; private set; }
+        public uint LockTime { get; private set; }
 
-        public static IEnumerable<Transaction> ParseMultiple(BinaryReader r, ulong transactionCount)
+        public static IEnumerable<Transaction> ParseMultiple(BinaryReader r, ulong count)
         {
-            for (ulong ti = 0; ti < transactionCount; ti++)
+            var list = new List<Transaction>((int)count);
+
+            for (ulong ti = 0; ti < count; ti++)
             {
                 var t = Parse(r);
 
-                yield return t;
+                list.Add(t);
             }
+
+            return list;
         }
 
         public static Transaction Parse(BinaryReader r)

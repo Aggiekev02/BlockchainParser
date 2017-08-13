@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Temosoft.Bitcoin.Blockchain
+namespace BlockchainParser.Parts
 {
     public class Block
     {

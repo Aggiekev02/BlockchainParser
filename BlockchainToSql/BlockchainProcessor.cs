@@ -3,9 +3,10 @@ namespace BlockchainToSql
     using System;
     using Microsoft.EntityFrameworkCore;
     using BlockchainToSql.Models;
-    using Temosoft.Bitcoin.Blockchain;
+    using BlockchainParser;
+    using BlockchainParser.Parts;
 
-    internal class BlockchainProcessor : BlockchainParser
+    internal class BlockchainProcessor : Blockchain
     {
         private long _records;
 

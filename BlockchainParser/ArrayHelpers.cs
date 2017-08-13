@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Temosoft.Bitcoin.Blockchain
+namespace BlockchainParser
 {
     public class ArrayHelpers
     {

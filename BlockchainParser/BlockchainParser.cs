@@ -1,10 +1,11 @@
-﻿using System.IO;
-//using System.IO.MemoryMappedFiles;
-using System.Linq;
-
-namespace Temosoft.Bitcoin.Blockchain
+﻿
+namespace BlockchainParser
 {
-    public abstract class BlockchainParser
+    using System.IO;
+    using System.Linq;
+    using BlockchainParser.Parts;
+
+    public abstract class Blockchain
     {
         public void Parse(string[] filesPath)
         {
@@ -68,51 +69,6 @@ namespace Temosoft.Bitcoin.Blockchain
             reader.BaseStream.Seek(block.HeaderLength, SeekOrigin.Current);
 
             return block;
-#if false
-            block.VersionNumber = reader.ReadUInt32();
-            block.PreviousBlockHash = reader.ReadHashAsByteArray();
-            block.MerkleRoot = reader.ReadHashAsByteArray();
-            block.TimeStamp = reader.ReadUInt32();
-            block.Bits = reader.ReadUInt32();
-            block.Nonce = reader.ReadUInt32();
-
-            var transactionCount = reader.ReadVarInt();
-            block.Transactions = new Transaction[transactionCount];
-
-            for (var ti = 0; ti < transactionCount; ti++)
-            {
-                var t = new Transaction();
-                t.VersionNumber = reader.ReadUInt32();
-
-                var inputCount = reader.ReadVarInt();
-                t.Inputs = new Input[inputCount];
-
-                for (var ii = 0; ii < inputCount; ii++)
-                {
-                    var input = new Input();
-                    input.TransactionHash = reader.ReadHashAsByteArray();
-                    input.TransactionIndex = reader.ReadUInt32();
-                    input.Script = reader.ReadStringAsByteArray();
-                    input.SequenceNumber = reader.ReadUInt32();
-                    t.Inputs[ii] = input;
-                }
-
-                var outputCount = reader.ReadVarInt();
-                t.Outputs = new Output[outputCount];
-
-                for (var oi = 0; oi < outputCount; oi++)
-                {
-                    var output = new Output();
-                    output.Value = reader.ReadUInt64();
-                    output.Script = reader.ReadStringAsByteArray();
-                    t.Outputs[oi] = output;
-                }
-                block.LockTime = reader.ReadUInt32();
-                block.Transactions[ti] = t;
-            }
-
-            return block;
-#endif
         }
     }
 }
