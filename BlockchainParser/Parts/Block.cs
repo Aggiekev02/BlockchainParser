@@ -6,7 +6,7 @@ namespace BlockchainParser.Parts
 {
     public class Block
     {
-        private static DateTime _epochBaseDate = new DateTime(1970,1,1);
+        public static DateTime EpochBaseDate = new DateTime(1970,1,1);
 
         private long Position { get; set; }
 
@@ -49,9 +49,10 @@ namespace BlockchainParser.Parts
             block.VersionNumber = block.Reader.ReadInt32();
             block.PreviousBlockHash = block.Reader.ReadHashAsByteArray();
             block.MerkleRoot = block.Reader.ReadHashAsByteArray();
-            block.TimeStamp = _epochBaseDate.AddSeconds(block.Reader.ReadUInt32());
+            block.TimeStamp = EpochBaseDate.AddSeconds(block.Reader.ReadUInt32());
             block.Bits = block.Reader.ReadUInt32();
             block.Nonce = block.Reader.ReadUInt32();
+
             var transactionCount = block.Reader.ReadCompactSize();
 
             block.Transactions = Transaction.ParseMultiple(block.Reader, transactionCount);
@@ -65,7 +66,7 @@ namespace BlockchainParser.Parts
         private static readonly double max_body = Math.Log(0x00ffff);
         private static readonly double scaland = Math.Log(256);
 
-        private static double CalculateDifficulty(uint bits)
+        public static double CalculateDifficulty(uint bits)
         {
             //return exp(max_body - fast_log(bits & 0x00ffffff) + scaland * (0x1d - ((bits & 0xff000000) >> 24)));
             var part1 = Math.Log(bits & 0x00ffffff);

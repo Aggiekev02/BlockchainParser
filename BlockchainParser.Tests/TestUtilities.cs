@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BlockchainParser.Tests
+﻿namespace BlockchainParser.Tests
 {
+    using System.Linq;
+
     internal static class TestUtilities
     {
         public static bool EqualByteArrays(byte[] a, byte[] b)
@@ -22,6 +20,11 @@ namespace BlockchainParser.Tests
                     return false;
 
             return true;
+        }
+
+        public static byte[] ReverseByteArray(byte[] a)
+        {
+            return a.Reverse().ToArray();
         }
     }
 }

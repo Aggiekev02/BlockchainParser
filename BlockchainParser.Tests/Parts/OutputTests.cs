@@ -8,7 +8,7 @@
     public class OutputTests
     {
         [TestMethod]
-        public void OutputTestParse()
+        public void OutputTestParse_Output1()
         {
             long satoshis = 2504275756;
 
