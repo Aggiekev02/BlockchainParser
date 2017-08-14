@@ -31,7 +31,7 @@ namespace BlockchainParser
             {
                 while(ReadMagic(reader))
                 {
-                    var block = ReadBlock(reader);
+                    var block = ReadBlock(stream);
                     ProcessBlock(block);
                 }
             }
@@ -62,11 +62,11 @@ namespace BlockchainParser
         {
         }
 
-        private static Block ReadBlock(BinaryReader reader)
+        private static Block ReadBlock(Stream stream)
         {
-            var block = Block.Parse(reader.BaseStream);
+            var block = Block.Parse(stream);
 
-            reader.BaseStream.Seek(block.BlockLength, SeekOrigin.Current);
+            //reader.BaseStream.Seek(block.BlockLength, SeekOrigin.Current);
 
             return block;
         }
