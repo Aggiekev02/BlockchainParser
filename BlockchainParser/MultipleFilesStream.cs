@@ -154,5 +154,25 @@ namespace BlockchainParser
         {
             get { return false; }
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (disposing)
+                {
+                    for (var i = _streams.Length - 1; i >= 0; i--)
+                    {
+                        var stream = _streams[i];
+                        stream.Dispose();
+                        _streams[i] = null;
+                    }
+                }
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
+        }
     }
 }

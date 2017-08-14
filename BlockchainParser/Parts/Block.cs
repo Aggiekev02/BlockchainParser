@@ -39,13 +39,19 @@ namespace BlockchainParser.Parts
 
         public static Block Parse(Stream stream)
         {
+            using (var reader = new BinaryReader(stream, System.Text.Encoding.ASCII, true))
+                return Parse(stream, reader, ParseBlockLength(reader));
+        }
+
+        public static Block Parse(Stream stream, BinaryReader reader, uint blockLength)
+        {
             var block = new Block();
 
             block.Position = stream.Position;
             block.Stream = stream;
-            block.Reader = new BinaryReader(stream);
+            block.Reader = reader;
 
-            block.BlockLength = block.Reader.ReadUInt32();
+            block.BlockLength = blockLength;
             block.VersionNumber = block.Reader.ReadInt32();
             block.PreviousBlockHash = block.Reader.ReadHashAsByteArray();
             block.MerkleRoot = block.Reader.ReadHashAsByteArray();
@@ -60,6 +66,11 @@ namespace BlockchainParser.Parts
             block.Difficulty = CalculateDifficulty(block.Bits);
 
             return block;
+        }
+
+        public static uint ParseBlockLength(BinaryReader reader)
+        {
+            return reader.ReadUInt32();
         }
 
         //static double max_body = fast_log(0x00ffff), scaland = fast_log(256);

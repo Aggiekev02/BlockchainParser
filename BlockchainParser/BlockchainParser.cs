@@ -1,6 +1,7 @@
 ﻿
 namespace BlockchainParser
 {
+    using System;
     using System.IO;
     using System.Linq;
     using BlockchainParser.Parts;
@@ -19,15 +20,15 @@ namespace BlockchainParser
             var streams = filesPath
                 .Select(filePath => new FileStream(filePath, FileMode.Open, FileAccess.Read))
                 .ToList();
-            
+
 #endif
-            var bufferedStream = new MultipleFilesStream(streams);
-            Parse(bufferedStream);
+            using (var bufferedStream = new MultipleFilesStream(streams))
+                Parse(bufferedStream);
         }
 
         private void Parse(Stream stream)
         {
-            using (var reader = new BinaryReader(stream))
+            using (var reader = new BinaryReader(stream, System.Text.Encoding.ASCII, true))
             {
                 while(ReadMagic(reader))
                 {
@@ -65,8 +66,6 @@ namespace BlockchainParser
         private static Block ReadBlock(Stream stream)
         {
             var block = Block.Parse(stream);
-
-            //reader.BaseStream.Seek(block.BlockLength, SeekOrigin.Current);
 
             return block;
         }
