@@ -22,7 +22,7 @@ namespace BlockchainToSql
                 {
                     var blockEntity = new Blocks
                     {
-                        Length = (int)block.HeaderLength,
+                        Length = (int)block.BlockLength,
                         MerkleRoot = block.MerkleRoot,
                         Nonce = block.Nonce,
                         PreviousBlockHash = block.PreviousBlockHash,

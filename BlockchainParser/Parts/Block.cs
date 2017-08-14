@@ -14,7 +14,7 @@ namespace BlockchainParser.Parts
 
         private BinaryReader Reader { get; set; }
 
-        public uint HeaderLength { get; private set; }
+        public uint BlockLength { get; private set; }
 
         public int VersionNumber { get; private set; }
 
@@ -45,7 +45,7 @@ namespace BlockchainParser.Parts
             block.Stream = stream;
             block.Reader = new BinaryReader(stream);
 
-            block.HeaderLength = block.Reader.ReadUInt32();
+            block.BlockLength = block.Reader.ReadUInt32();
             block.VersionNumber = block.Reader.ReadInt32();
             block.PreviousBlockHash = block.Reader.ReadHashAsByteArray();
             block.MerkleRoot = block.Reader.ReadHashAsByteArray();

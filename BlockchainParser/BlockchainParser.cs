@@ -66,7 +66,7 @@ namespace BlockchainParser
         {
             var block = Block.Parse(reader.BaseStream);
 
-            reader.BaseStream.Seek(block.HeaderLength, SeekOrigin.Current);
+            reader.BaseStream.Seek(block.BlockLength, SeekOrigin.Current);
 
             return block;
         }
