@@ -5,7 +5,7 @@ namespace BlockchainParser.Parts
 
     public class Output
     {
-        public ulong Value { get; private set; }
+        public long Value { get; private set; }
         public byte[] Script { get; private set; }
 
         public static IEnumerable<Output> ParseMultiple(BinaryReader r, ulong count)
@@ -29,7 +29,7 @@ namespace BlockchainParser.Parts
         {
             var output = new Output();
 
-            output.Value = r.ReadUInt64();
+            output.Value = r.ReadInt64();
 
             var length = r.ReadCompactSize();
 
