@@ -20,6 +20,7 @@
                 Assert.AreEqual(1, trans.Inputs.ToList().Count);
                 Assert.AreEqual(1, trans.Outputs.ToList().Count);
                 Assert.AreEqual((uint)0, trans.LockTime);
+                Assert.IsTrue(trans.Coinbase);
             }
         }
     }

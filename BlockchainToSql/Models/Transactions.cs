@@ -10,5 +10,7 @@ namespace BlockchainToSql.Models
         public long BlockID { get; set; }
 
         public long Version { get; set; }
+
+        public bool Coinbase { get; set; }
     }
 }

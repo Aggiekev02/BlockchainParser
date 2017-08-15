@@ -16,5 +16,7 @@ namespace BlockchainToSql.Models
         public byte[] Script { get; set; }
 
         public long SequenceNumber { get; set; }
+
+        public bool Coinbase { get; set; }
     }
 }

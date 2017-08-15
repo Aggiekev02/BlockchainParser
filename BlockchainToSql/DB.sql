@@ -43,6 +43,7 @@ CREATE TABLE [dbo].[Inputs](
 	[TransactionIndex] [bigint] NOT NULL,
 	[Script] [varbinary](max) NOT NULL,
 	[SequenceNumber] [bigint] NOT NULL,
+	[Coinbase] [bit] NOT NULL,
  CONSTRAINT [PK_Inputs] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
@@ -76,6 +77,7 @@ CREATE TABLE [dbo].[Transactions](
 	[ID] [bigint] IDENTITY(1,1) NOT NULL,
 	[BlockID] [bigint] NOT NULL,
 	[Version] [bigint] NOT NULL,
+	[Coinbase] [bit] NOT NULL,
  CONSTRAINT [PK_Transactions] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC

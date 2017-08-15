@@ -8,7 +8,7 @@ namespace BlockchainParser.Parts
         public long Value { get; private set; }
         public byte[] Script { get; private set; }
 
-        public static IEnumerable<Output> ParseMultiple(BinaryReader r, ulong count)
+        public static List<Output> ParseMultiple(BinaryReader r, ulong count)
         {
             if (count == 0)
                 return null;

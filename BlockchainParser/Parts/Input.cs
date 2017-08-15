@@ -15,7 +15,7 @@ namespace BlockchainParser.Parts
 
         public bool Coinbase { get { return TransactionIndex == uint.MaxValue; } }
 
-        public static IEnumerable<Input> ParseMultiple(BinaryReader r, ulong count)
+        public static List<Input> ParseMultiple(BinaryReader r, ulong count)
         {
             if (count == 0)
                 return null;

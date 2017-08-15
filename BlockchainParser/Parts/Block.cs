@@ -33,7 +33,7 @@ namespace BlockchainParser.Parts
 
         public double Difficulty { get; private set; }
 
-        public IEnumerable<Transaction> Transactions { get; private set; }
+        public List<Transaction> Transactions { get; private set; }
 
         public Block()
         {

@@ -6,11 +6,16 @@ namespace BlockchainParser.Parts
     public class Transaction
     {
         public int VersionNumber { get; private set; }
-        public IEnumerable<Input> Inputs { get; private set; }
-        public IEnumerable<Output> Outputs { get; private set; }
+
+        public List<Input> Inputs { get; private set; }
+
+        public List<Output> Outputs { get; private set; }
+
         public uint LockTime { get; private set; }
 
-        public static IEnumerable<Transaction> ParseMultiple(BinaryReader r, ulong count)
+        public bool Coinbase { get; private set; }
+
+        public static List<Transaction> ParseMultiple(BinaryReader r, ulong count)
         {
             var list = new List<Transaction>((int)count);
 
@@ -36,6 +41,9 @@ namespace BlockchainParser.Parts
             t.Outputs = Output.ParseMultiple(r, outputCount);
 
             t.LockTime = r.ReadUInt32();
+
+            if (t.Inputs.Count > 0 && t.Inputs[0].Coinbase)
+                t.Coinbase = true;
 
             return t;
         }
