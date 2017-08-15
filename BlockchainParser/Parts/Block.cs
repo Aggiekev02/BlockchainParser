@@ -1,9 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-
 namespace BlockchainParser.Parts
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Security.Cryptography;
+
     public class Block
     {
         public static DateTime EpochBaseDate = new DateTime(1970,1,1);
@@ -17,6 +18,8 @@ namespace BlockchainParser.Parts
         public uint BlockLength { get; private set; }
 
         public int VersionNumber { get; private set; }
+
+        public byte[] BlockHash { get; private set; }
 
         public byte[] PreviousBlockHash { get; private set; }
 
@@ -52,6 +55,9 @@ namespace BlockchainParser.Parts
             block.Reader = reader;
 
             block.BlockLength = blockLength;
+            byte[] header = block.Reader.ReadBytes(80);
+            stream.Position = stream.Position - 80;
+
             block.VersionNumber = block.Reader.ReadInt32();
             block.PreviousBlockHash = block.Reader.ReadHashAsByteArray();
             block.MerkleRoot = block.Reader.ReadHashAsByteArray();
@@ -64,6 +70,8 @@ namespace BlockchainParser.Parts
             block.Transactions = Transaction.ParseMultiple(block.Reader, transactionCount);
 
             block.Difficulty = CalculateDifficulty(block.Bits);
+
+            block.BlockHash = CalculateBlockHash(header);
 
             return block;
         }
@@ -85,6 +93,19 @@ namespace BlockchainParser.Parts
             var exp = Math.Exp(max_body - part1 + scaland * part2);
 
             return exp;
+        }
+
+        public static byte[] CalculateBlockHash(byte[] header)
+        {
+            var sha256 = SHA256.Create();
+
+            var blockHash = sha256.ComputeHash(sha256.ComputeHash(header));
+
+            var list = new List<byte>(blockHash);
+
+            list.Reverse();
+
+            return list.ToArray();
         }
     }
 }

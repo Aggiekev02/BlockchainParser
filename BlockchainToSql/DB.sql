@@ -16,11 +16,13 @@ GO
 CREATE TABLE [dbo].[Blocks](
 	[ID] [bigint] IDENTITY(1,1) NOT NULL,
 	[Length] [int] NOT NULL,
-	[LockTime] [bigint] NOT NULL,
+	[Version] [int] NOT NULL,
 	[Nonce] [bigint] NOT NULL,
-	[PreviousBlockHash] [binary](32) NOT NULL,
+	[Bits] [int] NOT NULL,
 	[TargetDifficulty] [float] NOT NULL,
 	[TimeStamp] [datetime] NOT NULL,
+	[BlockHash] [binary](32) NOT NULL,
+	[PreviousBlockHash] [binary](32) NOT NULL,
 	[MerkleRoot] [binary](32) NOT NULL,
  CONSTRAINT [PK_blocks] PRIMARY KEY CLUSTERED 
 (

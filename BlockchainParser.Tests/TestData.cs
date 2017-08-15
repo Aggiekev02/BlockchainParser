@@ -52,5 +52,19 @@ namespace BlockchainParser.Tests
 
             return list.ToArray();
         }
+
+        public static byte[] Block_0_Header()
+        {
+            var list = new List<byte>();
+
+            list.AddRange(new byte[] { 0x01, 0x00, 0x00, 0x00 }); // Block Version
+            list.AddRange(new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }); // Hash of previous block's header
+            list.AddRange(new byte[] { 59, 163, 237, 253, 122, 123, 18, 178, 122, 199, 44, 62, 103, 118, 143, 97, 127, 200, 27, 195, 136, 138, 81, 50, 58, 159, 184, 170, 75, 30, 94, 74 }); // Merkle root
+            list.AddRange(new byte[] { 41, 171, 95, 73 }); // Unix time
+            list.AddRange(new byte[] { 0xff, 0xff, 0x00, 29 }); // Bits
+            list.AddRange(new byte[] { 29, 172, 43, 124 }); // Nonce
+
+            return list.ToArray();
+        }
     }
 }

@@ -23,9 +23,13 @@ namespace BlockchainToSql
                     var blockEntity = new Blocks
                     {
                         Length = (int)block.BlockLength,
+                        Version = block.VersionNumber,
                         MerkleRoot = block.MerkleRoot,
                         Nonce = block.Nonce,
+                        BlockHash = block.BlockHash,
                         PreviousBlockHash = block.PreviousBlockHash,
+
+                        Bits = (int)(block.Bits + int.MinValue),
                         TargetDifficulty = block.Difficulty,
                         TimeStamp = block.TimeStamp
                     };
