@@ -35,24 +35,43 @@ namespace BlockchainParser.Parts
 
         public List<Transaction> Transactions { get; private set; }
 
+        public Metadata Metadata { get; private set; }
+
+        public bool MetadataOnly { get; private set; }
+
         public Block()
         {
 
         }
 
-        public static Block Parse(Stream stream)
+        public static Block Parse(Stream stream, bool metadataOnly = false)
         {
             using (var reader = new BinaryReader(stream, System.Text.Encoding.ASCII, true))
-                return Parse(stream, reader, ParseBlockLength(reader));
+                return Parse(stream, reader, ParseBlockLength(reader), metadataOnly);
         }
 
-        public static Block Parse(Stream stream, BinaryReader reader, uint blockLength)
+        public static Block Parse(Stream stream, BinaryReader reader, uint blockLength, bool metadataOnly = false)
         {
             var block = new Block();
 
             block.Position = stream.Position;
             block.Stream = stream;
             block.Reader = reader;
+
+            Tuple<string, long, long> metaData;
+
+            if (stream is MultipleFilesStream)
+                metaData = ((MultipleFilesStream)stream).GetCurrentStreamMetadata();
+            else if (stream is MemoryStream)
+                metaData = new Tuple<string, long, long>("no path", stream.Position, stream.Position);
+            else
+                throw new ApplicationException("Unknown stream type to build metadata from.");
+
+            block.Metadata = Metadata.BuildMetadata(metaData.Item1, metaData.Item2-4, metaData.Item3-4, blockLength);
+            block.MetadataOnly = metadataOnly;
+
+            if (metadataOnly)
+                return block;
 
             block.BlockLength = blockLength;
             byte[] header = block.Reader.ReadBytes(80);

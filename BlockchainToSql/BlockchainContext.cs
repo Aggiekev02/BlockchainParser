@@ -17,5 +17,7 @@ namespace BlockchainToSql
         public DbSet<Outputs> Outputs {get; set;}
 
         public DbSet<Transactions> Transactions { get; set; }
+
+        public DbSet<MetaDatas> MetaDatas { get; set; }
     }
 }

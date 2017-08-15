@@ -5,7 +5,31 @@ drop table dbo.Inputs
 drop table dbo.Outputs
 drop table dbo.Transactions
 drop table dbo.Blocks
+drop table dbo.MetaDatas
 
+GO
+
+USE [blockchain]
+GO
+
+/****** Object:  Table [dbo].[MetaDatas]    Script Date: 8/14/2017 10:08:40 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[MetaDatas](
+	[ID] [bigint] IDENTITY(1,1) NOT NULL,
+	[FilePath] [nvarchar](512) NOT NULL,
+	[Position] [bigint] NOT NULL,
+	[BlockchainPosition] [bigint] NOT NULL,
+	[BlockLength] [bigint] NOT NULL,
+ CONSTRAINT [PK_metadatas] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 GO
 
 /****** Object:  Table [dbo].[Blocks]    Script Date: 6/24/2017 9:51:32 PM ******/
@@ -15,6 +39,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Blocks](
 	[ID] [bigint] IDENTITY(1,1) NOT NULL,
+	[MetaDataID] [bigint] NOT NULL,
 	[Length] [int] NOT NULL,
 	[Version] [int] NOT NULL,
 	[Nonce] [bigint] NOT NULL,
@@ -84,6 +109,9 @@ CREATE TABLE [dbo].[Transactions](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
+GO
+ALTER TABLE [dbo].[Blocks]  WITH CHECK ADD  CONSTRAINT [FK_Blocks_Metadatas] FOREIGN KEY([MetaDataID])
+REFERENCES [dbo].[Metadatas] ([ID])
 GO
 ALTER TABLE [dbo].[Inputs]  WITH CHECK ADD  CONSTRAINT [FK_Inputs_Inputs] FOREIGN KEY([TransactionID])
 REFERENCES [dbo].[Transactions] ([ID])

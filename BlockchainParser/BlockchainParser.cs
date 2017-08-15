@@ -1,7 +1,7 @@
 ﻿
 namespace BlockchainParser
 {
-    using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using BlockchainParser.Parts;
@@ -18,7 +18,7 @@ namespace BlockchainParser
                 .ToList();
 #else
             var streams = filesPath
-                .Select(filePath => new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                .Select(filePath => new KeyValuePair<string, Stream>(filePath, new FileStream(filePath, FileMode.Open, FileAccess.Read)))
                 .ToList();
 
 #endif

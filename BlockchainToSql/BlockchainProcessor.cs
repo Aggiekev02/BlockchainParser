@@ -20,68 +20,83 @@ namespace BlockchainToSql
             {
                 try
                 {
-                    var blockEntity = new Blocks
+                    var meta = new MetaDatas
                     {
-                        Length = (int)block.BlockLength,
-                        Version = block.VersionNumber,
-                        MerkleRoot = block.MerkleRoot,
-                        Nonce = block.Nonce,
-                        BlockHash = block.BlockHash,
-                        PreviousBlockHash = block.PreviousBlockHash,
-
-                        Bits = (int)(block.Bits + int.MinValue),
-                        TargetDifficulty = block.Difficulty,
-                        TimeStamp = block.TimeStamp
+                        FilePath = block.Metadata.FilePath,
+                        Position = block.Metadata.Position,
+                        BlockchainPosition = block.Metadata.BlockchainPosition,
+                        BlockLength = block.Metadata.BlockLength
                     };
-                    _records++;
 
-                    context.Blocks.Add(blockEntity);
+                    context.MetaDatas.Add(meta);
                     context.SaveChanges();
 
-                    foreach (var trans in block.Transactions)
+                    if (!block.MetadataOnly)
                     {
-                        var transactionEntity = new Transactions
+                        var blockEntity = new Blocks
                         {
-                            Version = trans.VersionNumber,
-                            BlockID = blockEntity.ID
+                            Length = (int)block.BlockLength,
+                            Version = block.VersionNumber,
+                            MerkleRoot = block.MerkleRoot,
+                            Nonce = block.Nonce,
+                            BlockHash = block.BlockHash,
+                            PreviousBlockHash = block.PreviousBlockHash,
+
+                            Bits = (int)(block.Bits + int.MinValue),
+                            TargetDifficulty = block.Difficulty,
+                            TimeStamp = block.TimeStamp,
+                            MetaDataID = meta.ID
                         };
                         _records++;
-                        context.Transactions.Add(transactionEntity);
+
+                        context.Blocks.Add(blockEntity);
                         context.SaveChanges();
 
-                        if (trans.Inputs != null)
-                            foreach (var input in trans.Inputs)
+                        foreach (var trans in block.Transactions)
+                        {
+                            var transactionEntity = new Transactions
                             {
-                                if (input == null)
-                                    continue;
+                                Version = trans.VersionNumber,
+                                BlockID = blockEntity.ID
+                            };
+                            _records++;
+                            context.Transactions.Add(transactionEntity);
+                            context.SaveChanges();
 
-                                context.Inputs.Add(new Inputs
+                            if (trans.Inputs != null)
+                                foreach (var input in trans.Inputs)
                                 {
-                                    Script = input.Script,
-                                    SequenceNumber = input.SequenceNumber,
-                                    TransactionHash = input.TransactionHash,
-                                    TransactionIndex = input.TransactionIndex,
-                                    TransactionID = transactionEntity.ID
-                                });
-                                _records++;
-                            }
+                                    if (input == null)
+                                        continue;
 
-                        if (trans.Outputs != null)
-                            foreach (var output in trans.Outputs)
-                            {
-                                if (output == null)
-                                    continue;
+                                    context.Inputs.Add(new Inputs
+                                    {
+                                        Script = input.Script,
+                                        SequenceNumber = input.SequenceNumber,
+                                        TransactionHash = input.TransactionHash,
+                                        TransactionIndex = input.TransactionIndex,
+                                        TransactionID = transactionEntity.ID
+                                    });
+                                    _records++;
+                                }
 
-                                context.Outputs.Add(new Outputs
+                            if (trans.Outputs != null)
+                                foreach (var output in trans.Outputs)
                                 {
-                                    Script = output.Script,
-                                    Value = (long)output.Value,
-                                    TransactionID = transactionEntity.ID
-                                });
-                                _records++;
-                            }
+                                    if (output == null)
+                                        continue;
 
-                        context.SaveChanges();
+                                    context.Outputs.Add(new Outputs
+                                    {
+                                        Script = output.Script,
+                                        Value = (long)output.Value,
+                                        TransactionID = transactionEntity.ID
+                                    });
+                                    _records++;
+                                }
+
+                            context.SaveChanges();
+                        }
                     }
 
                     transaction.Commit();

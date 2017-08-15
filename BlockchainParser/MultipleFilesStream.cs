@@ -1,30 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
-namespace BlockchainParser
+﻿namespace BlockchainParser
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+
     public class MultipleFilesStream : Stream
     {
         private readonly Stream[] _streams;
+        private readonly String[] _paths;
         private readonly long[] _streamsLength;
 
         private Stream _currentStream;
         private int _currentStreamIndex;
-        private long _length=-1;
+        private long _length = -1;
         private long _position;
 
-        public MultipleFilesStream(IEnumerable<Stream> streams)
+        public MultipleFilesStream(IEnumerable<KeyValuePair<string, Stream>> streams)
         {
-            var enumerable = streams as Stream[] ?? streams.ToArray();
-            if (streams == null || !enumerable.Any())
-                throw new ArgumentNullException("streams", "No streams provided.");
+            if (streams == null)
+                throw new ArgumentNullException(nameof(streams));
 
-            _streams = enumerable.ToArray();
+            _streams = streams.Select(t => t.Value).ToArray();
+            _paths = streams.Select(t => t.Key).ToArray();
             _currentStreamIndex = 0;
             _currentStream = _streams[_currentStreamIndex];
             _streamsLength = _streams.Select(x => x.Length).ToArray();
+        }
+
+        public Tuple<string, long, long> GetCurrentStreamMetadata()
+        {
+            return new Tuple<string, long, long>(_paths[_currentStreamIndex], _streams[_currentStreamIndex].Position, _position);
         }
 
         public override void Flush()
@@ -166,6 +172,7 @@ namespace BlockchainParser
                         var stream = _streams[i];
                         stream.Dispose();
                         _streams[i] = null;
+                        _paths[i] = null;
                     }
                 }
             }

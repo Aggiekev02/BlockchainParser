@@ -1,8 +1,8 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace BlockchainToSql.Models
+﻿namespace BlockchainToSql.Models
 {
+    using System;
+    using System.ComponentModel.DataAnnotations;
+
     public class Blocks
     {
         [Key]
@@ -24,6 +24,8 @@ namespace BlockchainToSql.Models
 
         public byte[] PreviousBlockHash { get; set; }
 
-        public byte[] MerkleRoot {get; set;}
+        public byte[] MerkleRoot { get; set; }
+
+        public long MetaDataID {get;set;}
     }
 }
