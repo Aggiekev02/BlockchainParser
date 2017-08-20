@@ -67,11 +67,14 @@ namespace BlockchainParser.Parts
             else
                 throw new ApplicationException("Unknown stream type to build metadata from.");
 
-            block.Metadata = Metadata.BuildMetadata(metaData.Item1, metaData.Item2-4, metaData.Item3-4, blockLength);
+            block.Metadata = Metadata.BuildMetadata(metaData.Item1, metaData.Item2, metaData.Item3, blockLength);
             block.MetadataOnly = metadataOnly;
 
             if (metadataOnly)
+            {
+                stream.Position = stream.Position + block.Metadata.BlockLength;
                 return block;
+            }
 
             block.BlockLength = blockLength;
             byte[] header = block.Reader.ReadBytes(80);

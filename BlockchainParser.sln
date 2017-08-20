@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.3
+VisualStudioVersion = 15.0.26730.8
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlockchainParser", "BlockchainParser\BlockchainParser.csproj", "{2474624E-3339-460C-90AC-616041BDF3D4}"
 EndProject
@@ -17,6 +17,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockchainWalker", "BlockchainWalker\BlockchainWalker.csproj", "{12A37CD3-1323-467E-AE99-DADE4271C988}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlockchainParser.Tests", "BlockchainParser.Tests\BlockchainParser.Tests.csproj", "{2D619621-EC70-425B-93F1-7638E084A6A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockchainToSqlParallel", "BlockchainToSqlParallel\BlockchainToSqlParallel.csproj", "{624D7FD4-61B4-4533-9D95-F1CAA78917A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,6 +58,14 @@ Global
 		{2D619621-EC70-425B-93F1-7638E084A6A8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2D619621-EC70-425B-93F1-7638E084A6A8}.Release|x64.ActiveCfg = Release|x64
 		{2D619621-EC70-425B-93F1-7638E084A6A8}.Release|x64.Build.0 = Release|x64
+		{624D7FD4-61B4-4533-9D95-F1CAA78917A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{624D7FD4-61B4-4533-9D95-F1CAA78917A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{624D7FD4-61B4-4533-9D95-F1CAA78917A8}.Debug|x64.ActiveCfg = Debug|x64
+		{624D7FD4-61B4-4533-9D95-F1CAA78917A8}.Debug|x64.Build.0 = Debug|x64
+		{624D7FD4-61B4-4533-9D95-F1CAA78917A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{624D7FD4-61B4-4533-9D95-F1CAA78917A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{624D7FD4-61B4-4533-9D95-F1CAA78917A8}.Release|x64.ActiveCfg = Release|x64
+		{624D7FD4-61B4-4533-9D95-F1CAA78917A8}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

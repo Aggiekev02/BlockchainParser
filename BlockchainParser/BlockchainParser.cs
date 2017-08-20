@@ -63,7 +63,7 @@ namespace BlockchainParser
         {
         }
 
-        private static Block ReadBlock(Stream stream)
+        protected virtual Block ReadBlock(Stream stream)
         {
             var block = Block.Parse(stream);
 
