@@ -8,7 +8,7 @@ namespace BlockchainParser
 
     public abstract class Blockchain
     {
-        public void Parse(string[] filesPath)
+        public virtual void Parse(string[] filesPath, Metadata metadata)
         {
 #if false
             var streams = filesPath
@@ -26,7 +26,7 @@ namespace BlockchainParser
                 Parse(bufferedStream);
         }
 
-        private void Parse(Stream stream)
+        protected void Parse(Stream stream)
         {
             using (var reader = new BinaryReader(stream, System.Text.Encoding.ASCII, true))
             {
@@ -38,7 +38,7 @@ namespace BlockchainParser
             }
         }
 
-        private bool ReadMagic(BinaryReader reader)
+        protected bool ReadMagic(BinaryReader reader)
         {
             try
             {

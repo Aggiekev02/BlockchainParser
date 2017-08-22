@@ -17,7 +17,7 @@
                 var parser = new BlockchainProcessor();
 
                 stopWatch.Start();
-                parser.Parse(filesPath);
+                parser.Parse(filesPath, null);
                 stopWatch.Stop();
 
                 Console.WriteLine($"Done\nBlockchain parser ran for {stopWatch.ElapsedMilliseconds} ms.");
