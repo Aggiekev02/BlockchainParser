@@ -50,6 +50,12 @@ namespace BlockchainParser.Parts
                 return Parse(stream, reader, ParseBlockLength(reader), metadataOnly);
         }
 
+        public static Block Parse(Stream stream, uint blockLength, bool metadataOnly = false)
+        {
+            using (var reader = new BinaryReader(stream, System.Text.Encoding.ASCII, true))
+                return Parse(stream, reader, blockLength, metadataOnly);
+        }
+
         public static Block Parse(Stream stream, BinaryReader reader, uint blockLength, bool metadataOnly = false)
         {
             var block = new Block();

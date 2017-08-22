@@ -40,6 +40,13 @@ namespace BlockchainToSqlParallel
                 stopWatch.Stop();
 
                 Console.WriteLine($"Done\nBlockchain Metadata parser ran for {stopWatch.ElapsedMilliseconds} ms.");
+
+                stopWatch.Reset();
+                stopWatch.Start();
+                parser.ParallelParse(filesPath);
+                stopWatch.Stop();
+
+                Console.WriteLine($"Done\nBlockchain Metadata parser ran for {stopWatch.ElapsedMilliseconds} ms.");
             }
             catch (Exception ex)
             {

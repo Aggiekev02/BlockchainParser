@@ -57,7 +57,7 @@ namespace BlockchainToSqlParallel
                 {
                     stream.Position = metadata.BlockchainPosition;
 
-                    var block = Block.Parse(stream);
+                    var block = Block.Parse(stream, (uint)metadata.BlockLength, false );
 
                     SaveBlockToSql(metadata.ID, block);
                 }
@@ -70,7 +70,7 @@ namespace BlockchainToSqlParallel
             dbOptions.UseSqlServer(@"Server=(local)\sql2016;Database=blockchain;Trusted_Connection=True;");
 
             using (var context = new BlockchainContext(dbOptions.Options))
-                return context.MetaDatas.ToList();
+                return context.MetaDatas.Where(t => !context.Blocks.Select(x => x.MetaDataID).Contains(t.ID)).ToList();
         }
 
         private void SaveBlockToSql(long metadataId, Block block)
